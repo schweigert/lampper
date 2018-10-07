@@ -90,7 +90,10 @@ func (peer *Peer) ReadLambda() (*Lambda, error) {
 }
 
 func (peer *Peer) Handle(lambdaSet *LambdaSet) {
-	defer peer.Close()
+	defer func() {
+		_ = peer.Close()
+	}()
+
 	for {
 		lambda, err := peer.ReadLambda()
 		if err != nil {
