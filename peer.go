@@ -101,7 +101,7 @@ func (peer *Peer) Handle(lambdaSet *LambdaSet) {
 		}
 
 		lambdaFunction := lambdaSet.Get(lambda.Name)
-		if lambdaFunction != nil {
+		if lambdaFunction != nil && lambdaFunction.F != nil {
 			lambdaFunction.F(lambda, peer)
 		}
 	}
