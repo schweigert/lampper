@@ -11,9 +11,7 @@ type Peer struct {
 }
 
 func New(conn net.Conn) *Peer {
-	return &Peer{
-		conn: conn,
-	}
+	return &Peer{conn: conn}
 }
 
 func Dial(network, address string) (*Peer, error) {
