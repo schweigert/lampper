@@ -39,16 +39,21 @@ func TestServiceHandle(t *testing.T) {
 	assert.NoError(t, err)
 	var eventOne, eventTwo, eventThree int
 
+	wg := &sync.WaitGroup{}
+
+	wg.Add(3)
+
 	go func() {
 		listener.Handle(NewLambdaSet().Add("event one", func(lambda *Lambda, peer *Peer) {
 			eventOne++
-			peer.WriteLambda(NewLambda("event one", "event one"))
+			wg.Done()
 		}).Add("event two", func(lambda *Lambda, peer *Peer) {
 			eventTwo++
-			peer.WriteLambda(NewLambda("event two", "event two"))
+			wg.Done()
 		}).Add("event three", func(lambda *Lambda, peer *Peer) {
 			eventThree++
-			peer.WriteLambda(NewLambda("event three", "event three"))
+			wg.Done()
+			panic("Recover from this")
 		}))
 	}()
 
@@ -68,20 +73,14 @@ func TestServiceHandle(t *testing.T) {
 	err = peer.WriteLambda(NewLambda("event three", "nothong here"))
 	assert.NoError(t, err)
 
-	lambda, err := peer.ReadLambda()
-	assert.NoError(t, err)
-	assert.Equal(t, lambda.Name, lambda.Body)
-	assert.Equal(t, 1, eventOne)
+	wg.Wait()
 
-	lambda, err = peer.ReadLambda()
+	err = peer.Close()
 	assert.NoError(t, err)
-	assert.Equal(t, lambda.Name, lambda.Body)
-	assert.Equal(t, 1, eventTwo)
 
-	lambda, err = peer.ReadLambda()
+	peer, err = Dial("tcp", "localhost:3030")
 	assert.NoError(t, err)
-	assert.Equal(t, lambda.Name, lambda.Body)
-	assert.Equal(t, 1, eventThree)
+	assert.NotNil(t, peer)
 
 	err = peer.Close()
 	assert.NoError(t, err)

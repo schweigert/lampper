@@ -1,6 +1,7 @@
 package lampper
 
 import (
+	"log"
 	"net"
 
 	"github.com/schweigert/lampper/internal"
@@ -91,6 +92,10 @@ func (peer *Peer) ReadLambda() (*Lambda, error) {
 
 func (peer *Peer) Handle(lambdaSet *LambdaSet) {
 	defer func() {
+		r := recover()
+		if r != nil {
+			log.Println("Recovered from:", r)
+		}
 		_ = peer.Close()
 	}()
 
