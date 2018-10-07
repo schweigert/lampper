@@ -1,0 +1,23 @@
+sudo: false
+
+language: go
+
+go:
+  - 1.x
+
+git:
+  depth: 1
+
+# Skip the install step. Don't `go get` dependencies. Only build with the code
+# in vendor/
+install: true
+
+# Don't email me the results of the test runs.
+notifications:
+  email: false
+
+script:
+  - make install_dev   # install dev dependencies
+  - make ci            # run all the tests with the race detector enabled and generate cover
+  - make lint          # run lint
+  - make goveralls     # run coveralls

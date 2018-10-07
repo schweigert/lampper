@@ -1,2 +1,2 @@
 # lampper
-Lambda wrapper over tcp protocol
+Lambda wrapper over peers
