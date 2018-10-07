@@ -24,6 +24,13 @@ func (service *Service) Accept() *Peer {
 	}
 }
 
+func (service *Service) Handle(lambdaSet *LambdaSet) {
+	for {
+		peer := service.Accept()
+		go peer.Handle(lambdaSet)
+	}
+}
+
 func (service *Service) Close() error {
 	return service.listener.Close()
 }

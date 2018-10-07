@@ -88,3 +88,18 @@ func (peer *Peer) ReadLambda() (*Lambda, error) {
 
 	return NewLambda(name, body), err
 }
+
+func (peer *Peer) Handle(lambdaSet *LambdaSet) {
+	defer peer.Close()
+	for {
+		lambda, err := peer.ReadLambda()
+		if err != nil {
+			return
+		}
+
+		lambdaFunction := lambdaSet.Get(lambda.Name)
+		if lambdaFunction != nil {
+			lambdaFunction.F(lambda, peer)
+		}
+	}
+}
