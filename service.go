@@ -1,6 +1,9 @@
 package lampper
 
-import "net"
+import (
+	"log"
+	"net"
+)
 
 type Service struct {
 	listener net.Listener
@@ -27,6 +30,7 @@ func (service *Service) Accept() *Peer {
 func (service *Service) Handle(lambdaSet *LambdaSet) {
 	for {
 		peer := service.Accept()
+		log.Println("New connection")
 		go peer.Handle(lambdaSet)
 	}
 }
